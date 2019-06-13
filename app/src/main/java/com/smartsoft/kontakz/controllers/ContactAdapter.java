@@ -1,4 +1,4 @@
-package com.smartsoft.kontakz;
+package com.smartsoft.kontakz.controllers;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.smartsoft.kontakz.DetailsActivity;
+import com.smartsoft.kontakz.R;
+import com.smartsoft.kontakz.model.Contact;
 
 import java.util.ArrayList;
 

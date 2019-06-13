@@ -12,8 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.smartsoft.kontakz.controllers.ContactAdapter;
+import com.smartsoft.kontakz.db.ContactProvider;
+import com.smartsoft.kontakz.model.Contact;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,9 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int CONTACT_REQUEST_CODE = 10;
 
-    private ArrayList<Contact> contactList;
+    private ArrayList<Contact> contactList = new ArrayList<>();
     private ArrayAdapter<Contact> adapter;
     private ListView contactListView;
+
+    private ContactProvider mProvider;
 
     private int counter = 0;
     private boolean isRotate = false;
@@ -43,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        contactListView = findViewById(R.id.contactListView);
 
 
-        contactList = new ArrayList<>();
-//
+
+        mProvider = new ContactProvider(this);
+
         if (savedInstanceState != null){
             counter = savedInstanceState.getInt("counter");
             isRotate = savedInstanceState.getBoolean("isRotate");
@@ -56,9 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        adapter = new ContactAdapter(this, contactList);
-
-        contactListView.setAdapter(adapter);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -71,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+    }
+
+    public void updateUI(){
+        contactList = mProvider.getAllContact();
+        adapter = new ContactAdapter(this, contactList);
+        contactListView = findViewById(R.id.contactListView);
+        contactListView.setAdapter(adapter);
 
     }
 
@@ -88,8 +97,15 @@ public class MainActivity extends AppCompatActivity {
 
         isRotate = false;
 
+        mProvider.openDatabase();
+        updateUI();
+    }
+
+    @Override
+    protected void onPause() {
         adapter.clear();
-        loadContacts();
+        mProvider.closeDatabase();
+        super.onPause();
     }
 
     @Override
@@ -102,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-
         outState.putSerializable("contactList", contactList);
         outState.putInt("counter", counter);
         outState.putBoolean("isRotate", !isRotate);
@@ -133,38 +148,5 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadContacts(){
 
-        File storageDir = getFilesDir();
-        File myFile = new File(storageDir , FILE_NAME);
-
-        FileInputStream fis = null;
-
-
-        try {
-            fis = new FileInputStream(myFile);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            String stringContact = null;
-
-            while ((stringContact = br.readLine()) != null){
-                String[] contatcParts = stringContact.split(" ");
-
-                Contact contact = new Contact(contatcParts[0], contatcParts[1], contatcParts[2]);
-                contactList.add(contact);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }

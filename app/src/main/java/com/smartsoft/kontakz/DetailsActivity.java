@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.smartsoft.kontakz.model.Contact;
+
 public class DetailsActivity extends AppCompatActivity {
 
     TextView prenomTV;

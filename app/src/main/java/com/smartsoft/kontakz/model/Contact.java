@@ -1,4 +1,8 @@
-package com.smartsoft.kontakz;
+package com.smartsoft.kontakz.model;
+
+import android.content.ContentValues;
+
+import com.smartsoft.kontakz.db.ContractContact;
 
 import java.io.Serializable;
 
@@ -6,6 +10,10 @@ public class Contact implements Serializable {
     private String prenom;
     private String nom;
     private String phone;
+
+    public Contact(){
+
+    }
 
     public Contact(String prenom, String nom, String phone) {
         this.prenom = prenom;
@@ -35,5 +43,15 @@ public class Contact implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public ContentValues toValues(){
+        ContentValues values = new ContentValues();
+
+        values.put(ContractContact.COLUMN_PRENOM, prenom);
+        values.put(ContractContact.COLUMN_NOM, nom);
+        values.put(ContractContact.COLUMN_PHONE, phone);
+
+        return values;
     }
 }

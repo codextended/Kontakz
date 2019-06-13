@@ -1,7 +1,6 @@
 package com.smartsoft.kontakz;
 
 import android.content.Intent;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.File;
+import com.smartsoft.kontakz.db.ContactProvider;
+import com.smartsoft.kontakz.model.Contact;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +24,8 @@ public class ContactActivity extends AppCompatActivity {
     private EditText prenomET;
     private EditText nomET;
     private EditText phoneET;
+
+    private ContactProvider mProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,45 +47,30 @@ public class ContactActivity extends AppCompatActivity {
                 intent.putExtra("contact", myContact);
                 setResult(RESULT_OK, intent);
 
-                saveContact(myContact);
-                Toast.makeText(ContactActivity.this, "Save to " + getFilesDir() + "/" + FILE_NAME, Toast.LENGTH_SHORT).show();
+                mProvider = new ContactProvider(ContactActivity.this);
+                mProvider.openDatabase();
+
+                mProvider.addContact(myContact);
+
 
                 finish();
             }
         });
     }
 
-    private void saveContact(Contact myContact) {
-
-        String stringContact = String.format("%s %s %s", myContact.getPrenom(), myContact.getNom(), myContact.getPhone());
-
-
-
-        FileOutputStream fOut = null;
-        OutputStreamWriter myOutWriter = null;
-
-        try {
-            fOut = openFileOutput(FILE_NAME, MODE_APPEND);
-            myOutWriter = new OutputStreamWriter(fOut);
-            myOutWriter.append(stringContact);
-            myOutWriter.append("\n");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if (fOut != null) {
-                try {
-                    myOutWriter.close();
-                    fOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
+    @Override
+    protected void onPause() {
+        if (mProvider != null) {
+            mProvider.closeDatabase();
         }
 
+        super.onPause();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+
 }
