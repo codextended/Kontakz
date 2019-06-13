@@ -1,6 +1,7 @@
 package com.smartsoft.kontakz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ public class ContactAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Contact contact = (Contact) getItem(position);
+        final Contact contact = (Contact) getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
@@ -31,6 +32,15 @@ public class ContactAdapter extends ArrayAdapter {
 
         tvName.setText(fullName);
         tvPhone.setText(contact.getPhone());
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                intent.putExtra("contact", contact);
+                getContext().startActivity(intent);
+            }
+        });
 
 
         return convertView;

@@ -15,9 +15,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String FILE_NAME = "contact.txt";
 
     public static final int CONTACT_REQUEST_CODE = 10;
 
@@ -39,16 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         contactList = new ArrayList<>();
-
+//
         if (savedInstanceState != null){
-            contactList = (ArrayList<Contact>) savedInstanceState.getSerializable("contactList");
             counter = savedInstanceState.getInt("counter");
             isRotate = savedInstanceState.getBoolean("isRotate");
-        }else {
-            contactList.add(new Contact("Smath", "Cadet", "4587-9876"));
-            contactList.add(new Contact("Fritz", "Jeune", "4897-3452"));
-            contactList.add(new Contact("Macener", "Assad", "48543-0934"));
         }
+
 
 
 
@@ -78,19 +82,20 @@ public class MainActivity extends AppCompatActivity {
             counter++;
         }
 
-//        Toast.makeText(this, String.format("Activite afiche %d fois.", counter), Toast.LENGTH_SHORT).show();
 
         View parent = findViewById(android.R.id.content);
         Snackbar.make(parent, String.format("Activite afiche %d fois.", counter), Snackbar.LENGTH_LONG).show();
 
         isRotate = false;
+
+        adapter.clear();
+        loadContacts();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK && requestCode == CONTACT_REQUEST_CODE){
-            Contact myContact = (Contact) data.getExtras().getSerializable("contact");
-            contactList.add(myContact);
+//
             adapter.notifyDataSetChanged();
         }
     }
@@ -126,5 +131,40 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loadContacts(){
+
+        File storageDir = getFilesDir();
+        File myFile = new File(storageDir , FILE_NAME);
+
+        FileInputStream fis = null;
+
+
+        try {
+            fis = new FileInputStream(myFile);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            String stringContact = null;
+
+            while ((stringContact = br.readLine()) != null){
+                String[] contatcParts = stringContact.split(" ");
+
+                Contact contact = new Contact(contatcParts[0], contatcParts[1], contatcParts[2]);
+                contactList.add(contact);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

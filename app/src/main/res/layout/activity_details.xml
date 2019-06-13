@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetailsActivity">
+
+    <TextView
+        android:id="@+id/headerTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:text="Contact Informations"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/prenomLabelTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Prenom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerTV" />
+
+    <TextView
+        android:id="@+id/prenomTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/prenomLabelTV"
+        app:layout_constraintStart_toStartOf="@+id/prenomLabelTV"
+        app:layout_constraintTop_toBottomOf="@+id/prenomLabelTV" />
+
+    <TextView
+        android:id="@+id/nomLabelTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Nom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/prenomTV" />
+
+    <TextView
+        android:id="@+id/nomTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/nomLabelTV"
+        app:layout_constraintStart_toStartOf="@+id/nomLabelTV"
+        app:layout_constraintTop_toBottomOf="@+id/nomLabelTV" />
+
+    <TextView
+        android:id="@+id/phoneLabelTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Telephone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nomTV" />
+
+    <TextView
+        android:id="@+id/phoneTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/phoneLabelTV"
+        app:layout_constraintStart_toStartOf="@+id/phoneLabelTV"
+        app:layout_constraintTop_toBottomOf="@+id/phoneLabelTV" />
+</android.support.constraint.ConstraintLayout>
