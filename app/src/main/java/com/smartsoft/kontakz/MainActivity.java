@@ -2,17 +2,24 @@ package com.smartsoft.kontakz;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.smartsoft.kontakz.controllers.ContactAdapter;
 import com.smartsoft.kontakz.db.ContactProvider;
 import com.smartsoft.kontakz.model.Contact;
@@ -27,18 +34,16 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String FILE_NAME = "contact.txt";
+    FirebaseDatabase database;
+    DatabaseReference myref;
 
-    public static final int CONTACT_REQUEST_CODE = 10;
-
-    private ArrayList<Contact> contactList = new ArrayList<>();
+    private ArrayList<Contact> contactList;
     private ArrayAdapter<Contact> adapter;
     private ListView contactListView;
 
-    private ContactProvider mProvider;
-
     private int counter = 0;
     private boolean isRotate = false;
+    private static final String TAG = "com.smartsoft.kontakz";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,40 +52,45 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        database = FirebaseDatabase.getInstance();
+        myref = database.getReference().child("contact");
 
-
-
-        mProvider = new ContactProvider(this);
 
         if (savedInstanceState != null){
             counter = savedInstanceState.getInt("counter");
             isRotate = savedInstanceState.getBoolean("isRotate");
         }
 
-
-
-
-
-
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ContactActivity.class);
-                startActivityForResult(intent, CONTACT_REQUEST_CODE);
+                startActivity(intent);
             }
         });
-
-
 
     }
 
     public void updateUI(){
-        contactList = mProvider.getAllContact();
-        adapter = new ContactAdapter(this, contactList);
-        contactListView = findViewById(R.id.contactListView);
-        contactListView.setAdapter(adapter);
+        contactList  = new ArrayList<>();
+        myref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot contactSnapshot: dataSnapshot.getChildren()){
+                    Contact contact = contactSnapshot.getValue(Contact.class);
+                    contactList.add(contact);
+                }
+                adapter = new ContactAdapter(MainActivity.this, contactList);
+                contactListView = findViewById(R.id.contactListView);
+                contactListView.setAdapter(adapter);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -97,24 +107,15 @@ public class MainActivity extends AppCompatActivity {
 
         isRotate = false;
 
-        mProvider.openDatabase();
         updateUI();
     }
 
     @Override
     protected void onPause() {
         adapter.clear();
-        mProvider.closeDatabase();
         super.onPause();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK && requestCode == CONTACT_REQUEST_CODE){
-//
-            adapter.notifyDataSetChanged();
-        }
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
